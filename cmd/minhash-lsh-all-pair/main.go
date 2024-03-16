@@ -3,15 +3,13 @@ package main
 import (
 	"bufio"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
-	minhashlsh "github.com/ekzhu/minhash-lsh"
+	minhashlsh "github.com/AlirezaNeGe/minhash-lsh"
 )
 
 var (
