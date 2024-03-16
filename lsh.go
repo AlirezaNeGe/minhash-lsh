@@ -174,6 +174,18 @@ func (f *MinhashLSH) Add(key interface{}, sig []uint64) {
 	}
 }
 
+func (f *MinhashLSH) Remove(key interface{}) {
+	for i := range f.hashTables {
+		hashTable := f.hashTables[i]
+		for j := range hashTable {
+			if hashTable[j].key == key {
+				hashTable[j] = hashTable[len(hashTable)-1]
+				f.hashTables[i] = hashTable[:len(hashTable)-1]
+			}
+		}
+	}
+}
+
 // Index makes all the keys added searchable.
 func (f *MinhashLSH) Index() {
 	for i := range f.hashTables {

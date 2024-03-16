@@ -98,3 +98,50 @@ func Test_MinhashLSH2(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func Test_RemoveKey(t *testing.T) {
+	minhashLsh := NewMinhashLSH16(256, 0.5, 1)
+	seed := int64(1)
+	numHash := 256
+	mh := NewMinhash(seed, numHash)
+	words := []string{"hello", "world", "minhash", "one", "two", "three", "four",
+		"five", "six", "seven", "eight", "nine", "ten"}
+	for _, word := range words {
+		mh.Push([]byte(word))
+	}
+	// sig1 and sig2 are identical
+	sig1 := mh.Signature()
+	minhashLsh.Add("s1", sig1)
+	minhashLsh.Index()
+	k, l := minhashLsh.Params()
+	t.Logf("Minhash LSH params: k = %d, l = %d", k, l)
+
+	mh = NewMinhash(seed, numHash)
+	words = []string{"hello", "world", "minhash", "one", "two", "three", "four",
+		"five", "six", "seven", "eight", "nine", "ten"}
+	for _, word := range words {
+		mh.Push([]byte(word))
+	}
+	sig2 := mh.Signature()
+	minhashLsh.Add("s2", sig2)
+	minhashLsh.Index()
+	k, l = minhashLsh.Params()
+	t.Logf("Minhash LSH params: k = %d, l = %d", k, l)
+
+	minhashLsh.Remove("s2")
+	minhashLsh.Index()
+
+	mh = NewMinhash(seed, numHash)
+	words = []string{"one", "two", "three", "four",
+		"five", "six", "seven", "eight", "nine", "ten"}
+	for _, word := range words {
+		mh.Push([]byte(word))
+	}
+	sig3 := mh.Signature()
+
+	results := minhashLsh.Query(sig3)
+	t.Log(results)
+	if len(results) < 1 {
+		t.Fail()
+	}
+}
